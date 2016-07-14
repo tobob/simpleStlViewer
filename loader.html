@@ -12,8 +12,21 @@
 </head>
 <body>
 <div>
-select stl file: <input type="file" id="file" /> or drop stl file
+wybierz plik stl: <input type="file" id="file" /> albo przeciągnij
 </div>
-<div id="view" style="border:1px solid #aaa; width: 600px; height: 600px;"></div>
+<table>
+	<tr>
+		<td width="610px">
+			<div id="view" style="border:1px solid #aaa; width: 600px; height: 600px;"></div>
+		</td>
+		<td witdh="400px">
+			<div id="details">
+				<strong>
+					Objętość: <div id="volume"></div>
+				</strong>
+			</div>
+		</td>
+	</tr>
+</table>
 </body>
 </html>

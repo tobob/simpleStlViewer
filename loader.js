@@ -51,7 +51,7 @@ window.addEventListener("load", function () {
     view.appendChild(renderer.domElement);
     
     var camera = new THREE.PerspectiveCamera(45, w / h, 1, 1000);
-    camera.position.set(0, 0, 100);
+    camera.position.set(175, 150, 180);
     var controls = new THREE.TrackballControls(camera, view);
     
     var scene = new THREE.Scene();
@@ -72,7 +72,55 @@ window.addEventListener("load", function () {
     
     scene.add(obj);
 
-   
+    function volumeOfT(a, b, c){
+        // console.log("Wektory składowe")
+        // console.log(a);
+        // console.log(b);
+        // console.log(c);
+        var p1 = a.x*b.y*c.z;
+        var p2 = c.x*a.y*b.z;
+        var p3 = b.x*c.y*a.z;
+        var n1 = c.x*b.y*a.z;
+        var n2 = b.x*a.y*c.z;
+        var n3 = a.x*c.y*b.z;
+        console.log(a.x, a.y, a.z);
+        console.log(b.x, b.y, b.z);
+        console.log(c.x, c.y, c.z);
+        console.log((p1 + p2 + p3 - n1 - n2 - n3));
+        
+        return (1.0/6.0)*(p1 + p2 + p3 - n1 - n2 - n3);
+    }
+
+    function calculateVolume(object){
+        var volumes = 0.0;
+        var negative_volumes = 0.0;
+        console.log(object.geometry.faces.length);
+
+        for(var i = 0; i < object.geometry.faces.length; i++){
+            var Pi = object.geometry.faces[i].a;
+            var Qi = object.geometry.faces[i].b;
+            var Ri = object.geometry.faces[i].c;
+            // console.log(object.geometry.vertices[Pi]);
+
+            var P = new THREE.Vector3(object.geometry.vertices[Pi].x, object.geometry.vertices[Pi].y, object.geometry.vertices[Pi].z);
+            var Q = new THREE.Vector3(object.geometry.vertices[Qi].x, object.geometry.vertices[Qi].y, object.geometry.vertices[Qi].z);
+            var R = new THREE.Vector3(object.geometry.vertices[Ri].x, object.geometry.vertices[Ri].y, object.geometry.vertices[Ri].z);
+            var volume = volumeOfT(P, Q, R);
+            // console.log("Single volume", volume);
+            if(volume < 0){
+                negative_volumes += volume;
+            }
+            else{
+                volumes += volume;
+            }
+
+        }
+        console.log("Volumes", volumes);
+        console.log("Neg. volumes", negative_volumes);
+        return Math.abs(volumes + negative_volumes);
+    }
+
+
     var loop = function loop() {
         requestAnimationFrame(loop);
         controls.update();
@@ -92,6 +140,11 @@ window.addEventListener("load", function () {
             obj = new THREE.Mesh(geom, mat);
             obj.rotateX(270 * Math.PI / 180);
             scene.add(obj);
+            var div = document.getElementById('volume');
+            div.innerHTML = calculateVolume(obj) + " mm^3";
+            div.addEventListener('click', function(){
+                console.log(camera);
+            })
         }, false);
         reader.readAsArrayBuffer(file);
         var grid = new THREE.GridHelper(50, 10);
