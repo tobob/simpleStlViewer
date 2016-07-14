@@ -1,6 +1,3 @@
-
-
-
 window.addEventListener("load", function () {
     "use strict";
     var THREEx      = THREEx        || {};
@@ -19,7 +16,6 @@ window.addEventListener("load", function () {
     THREEx.GeometryUtils.middlePoint = function(geometry)
     {
         geometry.computeBoundingBox();
-        console.log(geometry.boundingBox);
 
         var middle  = new THREE.Vector3()
         middle.x    = ( geometry.boundingBox.min.x + geometry.boundingBox.max.x ) / 2;
@@ -73,20 +69,12 @@ window.addEventListener("load", function () {
     scene.add(obj);
 
     function volumeOfT(a, b, c){
-        // console.log("Wektory składowe")
-        // console.log(a);
-        // console.log(b);
-        // console.log(c);
         var p1 = a.x*b.y*c.z;
         var p2 = c.x*a.y*b.z;
         var p3 = b.x*c.y*a.z;
         var n1 = c.x*b.y*a.z;
         var n2 = b.x*a.y*c.z;
         var n3 = a.x*c.y*b.z;
-        console.log(a.x, a.y, a.z);
-        console.log(b.x, b.y, b.z);
-        console.log(c.x, c.y, c.z);
-        console.log((p1 + p2 + p3 - n1 - n2 - n3));
         
         return (1.0/6.0)*(p1 + p2 + p3 - n1 - n2 - n3);
     }
@@ -94,7 +82,6 @@ window.addEventListener("load", function () {
     function calculateVolume(object){
         var volumes = 0.0;
         var negative_volumes = 0.0;
-        console.log(object.geometry.faces.length);
 
         for(var i = 0; i < object.geometry.faces.length; i++){
             var Pi = object.geometry.faces[i].a;
@@ -106,17 +93,9 @@ window.addEventListener("load", function () {
             var Q = new THREE.Vector3(object.geometry.vertices[Qi].x, object.geometry.vertices[Qi].y, object.geometry.vertices[Qi].z);
             var R = new THREE.Vector3(object.geometry.vertices[Ri].x, object.geometry.vertices[Ri].y, object.geometry.vertices[Ri].z);
             var volume = volumeOfT(P, Q, R);
-            // console.log("Single volume", volume);
-            if(volume < 0){
-                negative_volumes += volume;
-            }
-            else{
-                volumes += volume;
-            }
+            volumes += volume;
 
         }
-        console.log("Volumes", volumes);
-        console.log("Neg. volumes", negative_volumes);
         return Math.abs(volumes + negative_volumes);
     }
 
